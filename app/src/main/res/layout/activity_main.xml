@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical" >
+
+    <Switch
+            android:id="@+id/wifiSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="end"
+            android:checked="true"
+            android:text="  Wi-Fi"
+            android:textSize="20dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"/>
+    <ListView
+            android:id="@+id/wifiList"
+            android:layout_width="match_parent"
+            android:layout_height="312dp"
+            android:layout_weight="0.97"/>
+
+    <Button
+            android:id="@+id/scanBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:text="Refresh"/>
+
+</LinearLayout>
