@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical" >
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
 
     <TextView
+            android:id="@+id/staticText1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
+            android:text="IOT POC"/>
+
+    <!--<TextView
             android:id="@+id/staticText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -13,24 +24,17 @@
             android:padding="10dp"
             android:textColor="@android:color/white"
             android:background="@color/colorPrimary"
-            android:text="Wi-Fi Connections"/>
+            android:text="Wi-Fi Connections"/>-->
 
     <TextView
-            android:id="@+id/textFailed"
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"
-            android:layout_below="@+id/staticText"
+            android:layout_below="@+id/staticText1"
             android:textSize="20dp"
             android:textColor="@color/AppRed"
             android:gravity="center"
             android:layout_centerVertical="true"/>
-
-    <ListView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/staticText"/>
 
     <ProgressBar
             android:id="@+id/progressBar_cyclic"
@@ -41,14 +45,4 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:visibility="invisible"/>
-    <Button
-            android:id="@+id/scanBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
-            android:textColor="@android:color/white"
-            android:text="Check Connections"
-            android:layout_alignParentBottom="true"/>
-
 </RelativeLayout>

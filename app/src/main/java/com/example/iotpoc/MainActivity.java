@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Switch aSwitch;
     final Handler handler = new Handler();
     private WifiInfo wifiInfo;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         buttonScan = findViewById(R.id.scanBtn);
         aSwitch=findViewById(R.id.wifiSwitch);
+        progressBar = findViewById(R.id.progressBar_cyclic);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         if (!wifiManager.isWifiEnabled()) {
@@ -73,23 +75,33 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(adapter);
-        scanWifi();
+        checkRequiredPermissions();
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!isChecked)
-                {
-                    wifiManager.setWifiEnabled(false);
-                    buttonScan.setVisibility(View.GONE);
-                    listView.setVisibility(View.GONE);
+                if(!isChecked) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            wifiManager.setWifiEnabled(false);
+                            buttonScan.setVisibility(View.INVISIBLE);
+                            listView.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
-                else
-                {
-                    wifiManager.setWifiEnabled(true);
-                    buttonScan.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.VISIBLE);
-                    checkRequiredPermissions();
+                else {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            wifiManager.setWifiEnabled(true);
+                            buttonScan.setVisibility(View.VISIBLE);
+                            listView.setVisibility(View.VISIBLE);
+                            checkRequiredPermissions();
+                        }
+                    });
                 }
             }
         });
@@ -106,12 +118,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             results = wifiManager.getScanResults();
-            unregisterReceiver(this);
 
             for (ScanResult scanResult : results) {
                 arrayList.add(scanResult.SSID);
                 adapter.notifyDataSetChanged();
             }
+
+            unregisterReceiver(this);
         }
     };
 
@@ -173,11 +186,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void connectToWiFi(String ssid, String key)
     {
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-
-        if (!wifiManager.isWifiEnabled()) {
-            wifiManager.setWifiEnabled(true);
-        }
+        final WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
         WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
@@ -186,34 +195,49 @@ public class MainActivity extends AppCompatActivity {
         wifiManager.disconnect();
         wifiManager.enableNetwork(netId, true);
 
-        while(!checkWifiConnectionSuccessful())
-        {
-            wifiManager.reconnect();
-        }
+        progressBar.setVisibility(View.VISIBLE);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(wifiManager.getConnectionInfo().getNetworkId()!=-1){
+                    progressBar.setVisibility(View.INVISIBLE);
+                    goToNextActivity();
+                }
+                else{
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(MainActivity.this, "Incorrect Password. Please try again", Toast.LENGTH_SHORT).show();
+                }
+            }
+        },4000);
 
-        goToNextActivity();
+/*
+        while(!isWifiConnectionSuccessful())
+        {
+
+        }*/
+
+//        goToNextActivity();
     }
 
     private void goToNextActivity()
     {
-        Intent intent = new Intent(getApplicationContext(),WebViewEx.class);
+        Intent intent = new Intent(getApplicationContext(),ArduinoConnector.class);
         startActivity(intent);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private boolean checkWifiConnectionSuccessful()
+    private boolean isWifiConnectionSuccessful()
     {
-        WifiInfo wifiInfo;
 
         do{
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    wifiInfo=wifiManager.getConnectionInfo();
                 }
             },500);
-            wifiInfo=wifiManager.getConnectionInfo();
         }
-        while(wifiInfo.getNetworkId()==-1 && Objects.equals(wifiInfo.getNetworkId(),null));
+        while(wifiInfo.getNetworkId()==-1 || Objects.equals(wifiInfo.getNetworkId(),null));
 
         return true;
     }

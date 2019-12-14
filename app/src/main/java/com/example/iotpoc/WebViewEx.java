@@ -59,7 +59,7 @@ public class WebViewEx extends AppCompatActivity {
     {
         ip=ip.substring(0,ip.lastIndexOf('.')+1);
         ip=ip+"1";
-        Toast.makeText(this, ip, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, ip, Toast.LENGTH_LONG).show();
         return ip;
     }
 

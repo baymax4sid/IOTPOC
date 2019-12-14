@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">IOT POC</string>
+    <string name="title_activity_display_screen">DisplayScreen</string>
+    <string name="title_activity_show_display">ShowDisplay</string>
 </resources>
